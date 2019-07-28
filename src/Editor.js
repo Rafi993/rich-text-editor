@@ -7,7 +7,6 @@ const Editor = () => {
 
   const handleChange = useCallback(
     e => {
-      console.log(e.keyCode);
       switch (e.keyCode) {
         // Backspace
         case 8:
@@ -53,26 +52,37 @@ const Editor = () => {
           setText(text + "\n");
           setCursor(cursor + 1);
           break;
-        // characters to ignore
-        case 9:
-        case 16:
-        case 18:
-        case 20:
-          break;
         default:
-          let newChar = String.fromCharCode(e.keyCode);
+          const { keyCode } = e;
+          const valid =
+            (e.keyCode > 47 && e.keyCode < 58) || // number keys
+            e.keyCode == 32 ||
+            e.keyCode == 13 || // spacebar & return key(s) (if you want to allow carriage returns)
+            (e.keyCode > 64 && e.keyCode < 91) || // letter keys
+            (e.keyCode > 95 && e.keyCode < 112) || // numpad keys
+            (e.keyCode > 185 && e.keyCode < 193) || // ;=,-./` (in order)
+            (e.keyCode > 218 && e.keyCode < 223); // [\]' (in order)
+
+          if (!valid) {
+            return;
+          }
+
+          let newChar = String.fromCharCode(keyCode);
 
           if (e.shiftKey || e.getModifierState("CapsLock")) {
             setText(text + newChar);
           } else {
             setText(text + newChar.toLowerCase());
           }
-
           setCursor(cursor + 1);
       }
     },
     [text, setText, cursor, editorRef, setCursor]
   );
+
+  const pasteAsPlainText = useCallback(() => {
+    const content = window.clipboardData.getData("Text");
+  }, []);
 
   console.log("data stored", text);
   return (
@@ -80,9 +90,11 @@ const Editor = () => {
       <div
         tabIndex="0"
         role="textarea"
+        html={text}
         className="Editor"
         onKeyDown={handleChange}
         ref={editorRef}
+        onPaste={pasteAsPlainText}
         contentEditable
       />
       {text}
