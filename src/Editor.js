@@ -53,10 +53,16 @@ const Editor = () => {
           setText(text + "\n");
           setCursor(cursor + 1);
           break;
+        // characters to ignore
+        case 9:
+        case 16:
+        case 18:
+        case 20:
+          break;
         default:
           let newChar = String.fromCharCode(e.keyCode);
 
-          if (e.shiftKey) {
+          if (e.shiftKey || e.getModifierState("CapsLock")) {
             setText(text + newChar);
           } else {
             setText(text + newChar.toLowerCase());
