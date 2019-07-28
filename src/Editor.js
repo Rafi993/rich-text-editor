@@ -54,7 +54,14 @@ const Editor = () => {
           setCursor(cursor + 1);
           break;
         default:
-          setText(text + String.fromCharCode(e.keyCode));
+          let newChar = String.fromCharCode(e.keyCode);
+
+          if (e.shiftKey) {
+            setText(text + newChar);
+          } else {
+            setText(text + newChar.toLowerCase());
+          }
+
           setCursor(cursor + 1);
       }
     },
