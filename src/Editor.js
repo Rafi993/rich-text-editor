@@ -80,9 +80,15 @@ const Editor = () => {
     [text, setText, cursor, editorRef, setCursor]
   );
 
-  const pasteAsPlainText = useCallback(() => {
-    const content = window.clipboardData.getData("Text");
-  }, []);
+  const pasteAsPlainText = useCallback(
+    e => {
+      e.preventDefault()
+      const text = e.clipboardData.getData("text/plain");
+      setText(text + pasteAsPlainText);
+      document.execCommand('insertHTML', false, text + pasteAsPlainText);
+    },
+    [text, setText]
+  );
 
   console.log("data stored", text);
   return (
