@@ -84,10 +84,12 @@ const Editor = () => {
     e => {
       e.preventDefault()
       const text = e.clipboardData.getData("text/plain");
-      setText(text + pasteAsPlainText);
-      document.execCommand('insertHTML', false, text + pasteAsPlainText);
+      const newText =text + pasteAsPlainText;
+      setText(newText);
+      setCursor(newText.length - 1);
+      document.execCommand('insertHTML', false, newText);
     },
-    [text, setText]
+    [text, setText, setCursor]
   );
 
   console.log("data stored", text);
